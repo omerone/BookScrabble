@@ -48,68 +48,23 @@ public class Board {
         return board.t;
     }
 
+
     public boolean boardLegal(Word w) {
-        // 1. check if the length is fit to the array of the array.
-        if(w.row<0 || w.row>=15 || w.col<0 || w.col>=15) {
-            return false;
-        }
-        //2. if it's the first round
-        if(t[7][7] == null) {
-            if(w.col == 7 && w.row == 7)
-                if(w.row <= 7 && w.row+trueLength(w) >=7 && w.row+trueLength(w)<15 && w.col <= 7 && w.col+trueLength(w) >=7 && w.col+trueLength(w) <15)
-                    return true;
-            if(w.col == 7) {
-                if(w.vertical) //up down
-                    if(w.row <= 7 && w.row+trueLength(w)-1 >=7 && w.row+trueLength(w)-1<15)
-                        return true;
-                if(w.col <= 7 && w.col+trueLength(w)-1 >=7 && w.col+trueLength(w)-1 <15)
-                    return true;
-            }
-            if(w.row == 7) {
-                if(w.vertical) //up down
-                    if(w.row <= 7 && w.row+trueLength(w)-1 >=7 && w.row+trueLength(w)-1 <15)
-                        return true;
-                if(w.col <= 7 && w.col+trueLength(w)-1 >=7 && w.col+trueLength(w)-1 <15)
-                    return true;
-            }
-            return false;
-        }
-        //3.length checks
-        if(w.vertical) {
-            if(trueLength(w) > 15-(w.row)) {
-                return false;
-            }
-        }
-        if(!w.vertical) {
-            if(trueLength(w) > 15-(w.col)) {
-                return false;
-            }
-        }
+         boolean check; int x ;
+         check = overBorders(w);
+         if (!check) return false;
+         x = firstToStart(w);
+         if(x == -1)
+             return false;
+         if(x == 1)
+             return true;
+         check = overLen(w);
+         if (!check) return false;
+         check = letterIsNotLegal(w);
+         if (!check) return false;
+         check = wordOnTopOfAnotherWord(w);
+         if (!check) return false;
 
-        //when one word is not between A to Z.
-        for(int i =0; i<w.tiles.length; i++) {
-            if(w.tiles[i] != null)
-                if(w.tiles[i].letter < 'A' || w.tiles[i].letter > 'Z')
-                    return false;
-        }
-
-        //when all the words are null.
-        int flag =0;
-        for(int i =0; i<w.tiles.length; i++) {
-            if(w.tiles[i] != null)
-                flag = 1;
-        }
-        if(flag == 0) return false;
-
-        //4. check if the word is on top of another word -> '___'
-        for(int i =0; i<w.tiles.length; i++) {
-            if(w.tiles[i] != null)
-                break;
-            if(i+1 == 15)
-                return false;
-        }
-
-        // 5. if the first letter start at null or letter that locate on the board with the same word
         if(t[w.row][w.col] == null) {
             return directions(w);
         }
@@ -122,11 +77,79 @@ public class Board {
         return false;
     }
 
-
+    boolean overBorders(Word w){
+        if(w.row<0 || w.row>=15 || w.col<0 || w.col>=15) {
+            return false;
+        }
+        else
+            return true;
+    }
+    int firstToStart(Word w){
+        if(t[7][7] == null) {
+            for(int i=0; i<w.tiles.length; i++) {
+                if(w.tiles[i] == null) {
+                    return -1;
+                }
+            }
+            if (w.col == 7 && w.row == 7)
+                if (w.row <= 7 && w.row + w.tiles.length >= 7 && w.row + w.tiles.length < 15 && w.col <= 7 && w.col + w.tiles.length >= 7 && w.col + w.tiles.length < 15)
+                    return 1;
+            //up down
+            if (w.col == 7) {
+                if (w.vertical)
+                    if (w.row <= 7 && w.row + w.tiles.length - 1 >= 7 && w.row + w.tiles.length - 1 < 15)
+                        return 1;
+                else return -1;
+            }
+            //up down
+            if (w.row == 7) {
+                if (!w.vertical)
+                    if (w.col <= 7 && w.col + w.tiles.length - 1 >= 7 && w.col + w.tiles.length - 1 < 15)
+                        return 1;
+                else
+                    return -1;
+            }
+        }
+        return 0;
+    }
+    boolean overLen(Word w){
+        if(w.vertical) {
+            if(w.tiles.length > 15-(w.row)) {
+                return false;
+            }
+        }
+        if(!w.vertical) {
+            if(w.tiles.length > 15-(w.col)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    boolean letterIsNotLegal(Word w){
+        int flag =0;
+        for(int i =0; i<w.tiles.length; i++) {
+            if(w.tiles[i] != null)
+                if(w.tiles[i].letter < 'A' || w.tiles[i].letter > 'Z')
+                    return false;
+            if(w.tiles[i] != null)
+                flag = 1;
+        }
+        if(flag == 0) return false;
+        else return true;
+    }
+      boolean wordOnTopOfAnotherWord(Word w) {
+        for(int i =0; i<w.tiles.length; i++) {
+            if(w.tiles[i] != null)
+                break;
+            if(i+1 == 15)
+                return false;
+        }
+        return true;
+    }
     public boolean directions(Word w) {
         //up to down
         if (w.vertical) {
-            for(int i =0; i<trueLength(w); i++) {
+            for(int i =0; i<w.tiles.length; i++) {
                 if(t[w.row+i][w.col] == null) {
                     continue;
                 }
@@ -139,7 +162,7 @@ public class Board {
         }
         //left to right
         else {
-            for(int i =0; i<trueLength(w); i++) {
+            for(int i =0; i<w.tiles.length; i++) {
                 if(t[w.row][w.col+i] == null) {
                     continue;
                 }
@@ -156,7 +179,7 @@ public class Board {
         if(w.vertical) {
             int i=0;
             //left and right
-            while(i<trueLength(w)) {
+            while(i<w.tiles.length) {
                 if(w.col-1 > 0) {
                     if(t[w.row+i][w.col-1] != null) {
                         flag = 1;
@@ -176,8 +199,8 @@ public class Board {
                 }
             }
             //down word
-            if( w.row +trueLength(w)-1 < 14) {
-                if(t[w.row+trueLength(w)+1][w.col] != null) {
+            if( w.row +w.tiles.length < 14) {
+                if(t[w.row+w.tiles.length][w.col] != null) {
                     flag =1;
                 }
             }
@@ -185,7 +208,7 @@ public class Board {
         //!vertical
         else {
             int i=0;
-            while(i<trueLength(w)) {
+            while(i<w.tiles.length) {
                 if(w.row-1 >0) {
                     if(t[w.row-1][w.col+i] != null) {
                         flag =1;
@@ -198,13 +221,15 @@ public class Board {
                 }
                 i++;
             }
+            //1 index left
             if(w.col-1 > 0) {
                 if(t[w.row][w.col-1] != null) {
                     flag =1;
                 }
             }
-            if(w.col+trueLength(w)-1 < 14) {
-                if(t[w.row][w.col+trueLength(w)+1] != null) {
+            //1 index right
+            if(w.col+w.tiles.length < 14) {
+                if(t[w.row][w.col+w.tiles.length] != null) { //*****//
                     flag =1;
                 }
             }
@@ -214,128 +239,82 @@ public class Board {
         }
         return false;
     }
-    
-    public int trueLength(Word w) {
-        int sum=0;
-        boolean check = false;
-        for(int i =0; i<w.tiles.length; i++) {
-            if(w.tiles[i] != null || check) {
-                sum++;
-                check = false;
-            }
-            else {
-                for(int s =i; s<w.tiles.length; s++) {
-                    if(w.tiles[s] != null) {
-                        check = true;
-                        i--;
-                        break;
-                    }
-                }
-            }
-        }
-        return sum;
-    }
 
     public boolean dictionaryLegal(Word word) {
         return true;
     }
 
-    public ArrayList<Word> getWords(Word word)
-    {
+    public ArrayList<Word> getWords(Word word) {
         boolean checking = false;
         ArrayList arrayList = new ArrayList();
         arrayList = layingWords(word);
         Tile [] tile = new Tile[word.tiles.length];
 
-        if(arrayList.size() > 0)
-        {
+        if(arrayList.size() > 0) {
             boolean contain = contain(arrayList, word);
-            if(contain)
-            {
+            if(contain) {
                 return arrayList;
             }
         }
 
         //puting 'word' into the array . if we have null in 'word' complete the word by t[][]
-        for(int i=0; i<trueLength(word); i++)
-        {
-            if(word.tiles[i] == null)
-            {
+        for(int i=0; i<word.tiles.length; i++) {
+            if(word.tiles[i] == null) {
                 checking = true;
-                if(word.vertical)
-                {
+                if(word.vertical) {
                     tile[i] = t[word.row+i][word.col];
                 }
-                else
-                {
+                else {
                     tile[i] = t[word.row][word.col+i];
                 }
             }
-            else
-            {
+            else {
                 tile[i] = word.tiles[i];
             }
         }
-        if(checking)
-        {
+        if(checking) {
             Word newWordToAdd;
-            if(word.vertical)
-            {
+            if(word.vertical) {
                 newWordToAdd = new Word(tile ,word.row  ,word.col  ,true);
             }
-            else
-            {
+            else {
                 newWordToAdd = new Word(tile ,word.row  ,word.col ,false);
             }
             //the original word
             arrayList.add(newWordToAdd);
             return arrayList;
         }
-        else
-        {
+        else {
             //the original word
             arrayList.add(word);
             return arrayList;
         }
 
     }
-    public boolean contain(ArrayList<Word> arrayList , Word word)
-    {
-        if(word.vertical)
-        {
-            if(arrayList.get(0).vertical && arrayList.get(0).col == word.col)
-            {
-                if(arrayList.get(0).row == word.row)
-                {
-                    if(trueLength(arrayList.get(0)) > trueLength(word))
-                    {
+    public boolean contain(ArrayList<Word> arrayList , Word word) {
+        if(word.vertical) {
+            if(arrayList.get(0).vertical && arrayList.get(0).col == word.col) {
+                if(arrayList.get(0).row == word.row) {
+                    if(arrayList.get(0).tiles.length > word.tiles.length) {
                         return true;
                     }
                 }
-                if(arrayList.get(0).row < word.row)
-                {
-                    if(trueLength(arrayList.get(0))-1 + arrayList.get(0).row >= word.row + trueLength(word)-1)
-                    {
+                if(arrayList.get(0).row < word.row) {
+                    if(arrayList.get(0).tiles.length-1 + arrayList.get(0).row >= word.row + word.tiles.length-1) {
                         return true;
                     }
                 }
             }
         }
-        else
-        {
-            if(!arrayList.get(0).vertical && arrayList.get(0).row == word.row)
-            {
-                if(arrayList.get(0).col == word.col)
-                {
-                    if(trueLength(arrayList.get(0)) > trueLength(word))
-                    {
+        else {
+            if(!arrayList.get(0).vertical && arrayList.get(0).row == word.row) {
+                if(arrayList.get(0).col == word.col) {
+                    if(arrayList.get(0).tiles.length > word.tiles.length) {
                         return true;
                     }
                 }
-                if(arrayList.get(0).col < word.col)
-                {
-                    if(trueLength(arrayList.get(0))-1 + arrayList.get(0).col >= word.col + trueLength(word)-1)
-                    {
+                if(arrayList.get(0).col < word.col) {
+                    if(arrayList.get(0).tiles.length-1 + arrayList.get(0).col >= word.col + word.tiles.length-1) {
                         return true;
                     }
                 }
@@ -343,6 +322,19 @@ public class Board {
         }
         return false;
     }
+
+    Tile [] removingNullsFromArray(Tile [] tiles) {
+        int i =0;
+        while (tiles[i]!= null) {
+            i++;
+        }
+        Tile [] newTile = new Tile[i];
+        for(int s=0; s<i; s++) {
+            newTile[s] = tiles[s];
+        }
+        return newTile;
+    }
+
     /* one option to check - one word close to another word */
     public ArrayList<Word> layingWords (Word word) //the words that surond the word on the board.
     {
@@ -368,21 +360,22 @@ public class Board {
                         s++;
                         firstRealLetter++;
                     }
-                    for(int x=0; x<trueLength(word); x++,s++) {
+                    for(int x=0; x<word.tiles.length; x++,s++) {
                         tileForNewWord[s] = word.tiles[x];
                     }
                     visit=1;
-                    Word newWordToAdd = new Word(tileForNewWord , j , word.col ,true);
+                    Tile [] tiles = removingNullsFromArray(tileForNewWord);
+                    Word newWordToAdd = new Word(tiles , j , word.col ,true);
                     arrayList.add(newWordToAdd);
                 }
             }
             //most down
-            if(word.row+trueLength(word) < 14 && visit ==0) {
-                if(t[word.row+trueLength(word)][word.col] != null && word.tiles[trueLength(word)-1] != null) {
+            if(word.row+word.tiles.length < 14 && visit ==0) {
+                if(t[word.row+word.tiles.length][word.col] != null && word.tiles[word.tiles.length-1] != null) {
                     Tile [] tileForNewWord = new Tile[15];
                     int j=word.row;
                     int x;
-                    for(x =0; x<trueLength(word); x++ , j++) {
+                    for(x =0; x<word.tiles.length; x++ , j++) {
                         if(word.tiles[x] == null && t[word.row+x][word.col] != null) {
                             tileForNewWord[x] = t[word.row+x][word.col];
                             continue;
@@ -394,12 +387,13 @@ public class Board {
                         x++;
                         j++;
                     }
-                    Word newWordToAdd = new Word(tileForNewWord , word.row , word.col ,true);
+                    Tile [] tiles = removingNullsFromArray(tileForNewWord);
+                    Word newWordToAdd = new Word(tiles , word.row , word.col ,true);
                     arrayList.add(newWordToAdd);
                 }
             }
             //loop the word itself
-            while(i != trueLength(word)) {
+            while(i != word.tiles.length) {
                 if(word.tiles[i] == null) {
                     i++;
                     continue;
@@ -416,7 +410,8 @@ public class Board {
                             j++;
                             s++;
                         }
-                        Word newWordToAdd = new Word(tileForNewWord , word.row+i , word.col ,false);
+                        Tile [] tiles = removingNullsFromArray(tileForNewWord);
+                        Word newWordToAdd = new Word(tiles , word.row+i , word.col ,false);
                         arrayList.add(newWordToAdd);
                     }
                 }
@@ -444,7 +439,8 @@ public class Board {
                         if(t[word.row][word.col+1] ==null) {
                             tileForNewWord[s] = word.tiles[i];
                         }
-                        Word newWordToAdd = new Word(tileForNewWord , word.row+i , j ,false);
+                        Tile [] tiles = removingNullsFromArray(tileForNewWord);
+                        Word newWordToAdd = new Word(tiles , word.row+i , j ,false);
                         arrayList.add(newWordToAdd);
                     }
                 }
@@ -470,41 +466,34 @@ public class Board {
                     j++;
                     firstRealLetter = j;
                     int index = 0;
-
-//                    boolean flag = false;
-//                    if (t[word.row][word.col+1] != null) flag = true;
                     int cal = word.tiles.length;
                     while (t[word.row][firstRealLetter] != null || index < cal) {
-
                         //when we have on the board tile != null
                         if (t[word.row][firstRealLetter] != null)
                             tileForNewWord[s] = t[word.row][firstRealLetter];
-
                         //when we have in the word tile != null
                         else if (word.tiles[index] != null)
                             tileForNewWord[s] = word.tiles[index];
-
                         //start add only when first is came to word.col
                         if (firstRealLetter >= word.col )
                             index++;
-
-
                         firstRealLetter++;
                         s++;
                     }
                     visit = 1;
-                    Word newWordToAdd = new Word(tileForNewWord, word.row, j, false);
+                    Tile [] tiles = removingNullsFromArray(tileForNewWord);
+                    Word newWordToAdd = new Word(tiles, word.row, j, false);
                     arrayList.add(newWordToAdd);
                 }
             }
             //the rightest
-            if(word.col+trueLength(word)-1 < 14 && visit == 0) {
-                if(word.tiles[trueLength(word)-1] != null && t[word.row][word.col+trueLength(word)] != null) {
+            if(word.col+word.tiles.length-1 < 14 && visit == 0) {
+                if(word.tiles[word.tiles.length-1] != null && t[word.row][word.col+word.tiles.length] != null) {
                     int j= word.col;
                     int x =0;
                     Tile [] tileForNewWord = new Tile[15];
                     //put inside the word itself
-                    for(x =0; x<trueLength(word); x++,j++) {
+                    for(x =0; x<word.tiles.length; x++,j++) {
                         tileForNewWord[x] = word.tiles[x];
                     }
                     //put what i have on the board
@@ -513,12 +502,13 @@ public class Board {
                         x++;
                         j++;
                     }
-                    Word newWordToAdd = new Word(tileForNewWord , word.row , word.col ,false);
+                    Tile [] tiles = removingNullsFromArray(tileForNewWord);
+                    Word newWordToAdd = new Word(tiles , word.row , word.col ,false);
                     arrayList.add(newWordToAdd);
                 }
             }
             //loop the word itself
-            while(i != trueLength(word)) {
+            while(i != word.tiles.length) {
                 // up with or without down
                 if(word.tiles[i] == null) {
                     i++;
@@ -552,7 +542,8 @@ public class Board {
                             s++;
                             x++;
                         }
-                        Word newWordToAdd = new Word(tileForNewWord , j , word.col+i ,true);
+                        Tile [] tiles = removingNullsFromArray(tileForNewWord);
+                        Word newWordToAdd = new Word(tiles , j , word.col+i ,true);
                         arrayList.add(newWordToAdd);
                     }
                 }
@@ -560,25 +551,22 @@ public class Board {
                 if(word.row+i >14) {
                     break;
                 }
-                if(word.row+1 < 14)
-                {
-                    if(word.tiles[i] != null && t[word.row+1][word.col+i] != null && t[word.row-1][word.col+i] == null)
-                    {
+                if(word.row+1 < 14) {
+                    if(word.tiles[i] != null && t[word.row+1][word.col+i] != null && t[word.row-1][word.col+i] == null) {
                         int j= word.row+1;
                         int s=1;
                         Tile [] tileForNewWord = new Tile[15];
                         tileForNewWord[0] = word.tiles[i];
-                        while(t[j][word.col+i] != null)
-                        {
+                        while(t[j][word.col+i] != null) {
                             tileForNewWord[s] = t[j][word.col+i];
-                            if(j==14)
-                            {
+                            if(j==14) {
                                 break;
                             }
                             s++;
                             j++;
                         }
-                        Word newWordToAdd = new Word(tileForNewWord , word.row , word.col+i ,true);
+                        Tile [] tiles = removingNullsFromArray(tileForNewWord);
+                        Word newWordToAdd = new Word(tiles , word.row , word.col+i ,true);
                         arrayList.add(newWordToAdd);
                     }
                 }
@@ -593,10 +581,10 @@ public class Board {
         int sum=0;
         int temp=0;
         //suming letters
-        for(int i =0; i<trueLength(word); i++) {
+        for(int i =0; i<word.tiles.length; i++) {
             if(word.tiles[i] == null) {
                 if(word.vertical) {
-                     char w = t[word.row+i][word.col].letter;
+                    char w = t[word.row+i][word.col].letter;
                     temp = letterScore[(w - 65)];
                 }
                 else {
@@ -627,7 +615,7 @@ public class Board {
             sum += temp;
         }
         // suming words
-        for (int i =0; i<trueLength(word); i++) {
+        for (int i =0; i<word.tiles.length; i++) {
             if (word.vertical) {
                 // first step in the game
                 if (boardScore[word.row + i][word.col] == 'C' && !middleCheck) {
@@ -676,18 +664,19 @@ public class Board {
         }
 
         //put the word into the board   -> t[][]
-        for(int i =0; i<trueLength(word); i++) {
+        for(int i =0; i<word.tiles.length; i++) {
             if(word.tiles[i] == null) {
              continue;
             }
             if (word.vertical) {
-                t[word.row + i][word.col] = word.getTiles()[i];
+                if(word.row + i <= 14 || word.row + i >= 0)
+                    t[word.row + i][word.col] = word.getTiles()[i];
             }
             else {
-                t[word.row][word.col + i] = word.getTiles()[i];
+                if(word.col + i <= 14 || word.col + i >= 0)
+                    t[word.row][word.col + i] = word.getTiles()[i];
             }
         }
-        
 
         //sum all the score that lying
         int sum =0;
@@ -695,7 +684,7 @@ public class Board {
             //sum each word that lay on 'word'
             sum += getScore(array.get(w));
             //check if it is the first word on the board if yes it suppose to locate on the middle star -> double word score/
-            for(int i =0; i<trueLength(array.get(w)); i++) {
+            for(int i =0; i<array.get(w).tiles.length; i++) {
                 if(word.vertical) {
                     if(array.get(w).row+i == 7 && array.get(w).col ==7 && !middleCheck) {
                         middleCheck = true;
@@ -710,8 +699,6 @@ public class Board {
                 }
             }
         }
-
         return sum;
-
     }
 }

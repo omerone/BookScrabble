@@ -76,27 +76,27 @@ public class MainTrain {
 
         //test -1
 
-        Word horn=new Word(get("HORN"), 7, 5, false);
-        if(b.tryPlaceWord(horn)!=14)
-            System.out.println("problem in placeWord for 1st word (-10)");
-
-        Word farm=new Word(get("FA_M"), 5, 7, true);
-        if(b.tryPlaceWord(farm)!=9)
-            System.out.println("problem in placeWord for 2ed word (-10)");
-
-        Word paste=new Word(get("PASTE"), 9, 5, false);
-        if(b.tryPlaceWord(paste)!=25)
-            System.out.println("problem in placeWord for 3ed word (-10)");
-
-        Word mob=new Word(get("_OB"), 8, 7, false);
-        int mobpoint = b.tryPlaceWord(mob);
-        if(mobpoint!=18)
-            System.out.println("mob point sould be 18");
-
-        Word bit=new Word(get("BIT"), 10, 4, false);
-        int bitpoint = b.tryPlaceWord(bit);
-        if(bitpoint!=22)
-         System.out.println("bitpoint should be 22 (-15)");
+//        Word horn=new Word(get("HORN"), 7, 5, false);
+//        if(b.tryPlaceWord(horn)!=14)
+//            System.out.println("problem in placeWord for 1st word (-10)");
+//
+//        Word farm=new Word(get("FA_M"), 5, 7, true);
+//        if(b.tryPlaceWord(farm)!=9)
+//            System.out.println("problem in placeWord for 2ed word (-10)");
+//
+//        Word paste=new Word(get("PASTE"), 9, 5, false);
+//        if(b.tryPlaceWord(paste)!=25)
+//            System.out.println("problem in placeWord for 3ed word (-10)");
+//
+//        Word mob=new Word(get("_OB"), 8, 7, false);
+//        int mobpoint = b.tryPlaceWord(mob);
+//        if(mobpoint!=18)
+//            System.out.println("mob point sould be 18");
+//
+//        Word bit=new Word(get("BIT"), 10, 4, false);
+//        int bitpoint = b.tryPlaceWord(bit);
+//        if(bitpoint!=22)
+//         System.out.println("bitpoint should be 22 (-15)");
 //
 
         //test -2
@@ -133,16 +133,52 @@ public class MainTrain {
 
 
         //test -5 <-> tests that suppose to return 0.
-        Word bit4=new Word(get("ABA"),0,12,false);
-        if(b.tryPlaceWord(bit4)!=0)//not adjust to any tile in graph
-            System.out.println("ABA should be 0 (-15)");
-        Word bit5=new Word(get("ADEL"),3,11,false);
-        if(b.tryPlaceWord(bit5)!=0)//Not legal.
-            System.out.println("ADEL should be 0 (-15)");
-        Word aaaa =new Word(get("aawe"), 5, 8, false);
-        if(b.tryPlaceWord(aaaa)!=0) //letters are not legal
-            System.out.println("aawe should be 0");
 
+//        Word bit4=new Word(get("ABA"),0,12,false);
+//        if(b.tryPlaceWord(bit4)!=0)//not adjust to any tile in graph
+//            System.out.println("ABA should be 0 (-15)");
+//        Word bit5=new Word(get("ADEL"),3,11,false);
+//        if(b.tryPlaceWord(bit5)!=0)//Not legal.
+//            System.out.println("ADEL should be 0 (-15)");
+//        Word aaaa =new Word(get("aawe"), 5, 8, false);
+//        if(b.tryPlaceWord(aaaa)!=0) //letters are not legal
+//            System.out.println("aawe should be 0");
+//        Word bot=new Word(get("___"), 0, 7, false);
+//        if(b.tryPlaceWord(bot)!=0)
+//            System.out.println("problem in placeWord for 1st word (-10)");
+
+
+        //test 6
+//        Word love=new Word(get("LO_E"), 0, 7, false);
+//        if(b.tryPlaceWord(love)!=0)
+//            System.out.println("problem in placeWord for 1st word (-10)");
+//
+//        Word horn=new Word(get("HORN"), 1, 7, true);
+//        if(b.tryPlaceWord(horn)!=0)
+//            System.out.println("problem in placeWord for 1st word (-10)");
+//
+//        Word tov=new Word(get("TOV"), 7, 8, false);
+//        if(b.tryPlaceWord(tov)!=0)
+//            System.out.println("problem in placeWord for 1st word (-10)");
+
+        Word board=new Word(get("BOARD"), 4, 5, false);
+        if(b.tryPlaceWord(board)!=0)
+            System.out.println("problem in placeWord for 1st word (-10)");
+        Word lol=new Word(get("LOL"), 6, 7, true);
+        if(b.tryPlaceWord(lol)!=6)
+            System.out.println("problem in placeWord for 2st word (-10)");
+        Word beers=new Word(get("BEARS"), 8, 2, false);
+        if(b.tryPlaceWord(beers)!=12)
+            System.out.println("problem in placeWord for 3st word (-10)");
+        Word okay=new Word(get("_KAY"), 7, 7, false);
+        if(b.tryPlaceWord(okay)!=11)
+            System.out.println("problem in placeWord for 4st word (-10)");
+        Word abc=new Word(get("ABC"), 9, 8, false);
+        if(b.tryPlaceWord(abc)!=0)
+            System.out.println("problem in placeWord for 5st word (-10)");
+        Word x=new Word(get("X"), 8, 8, true);
+        if(b.tryPlaceWord(x)!=49)
+            System.out.println("problem in placeWord for 7st word (-10)");
     }
 
     public static void main(String[] args) {

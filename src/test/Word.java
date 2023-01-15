@@ -10,8 +10,7 @@ public class Word {
     boolean vertical;
 
 
-    Word(Tile[] t, int r , int c , boolean v)
-    {
+    Word(Tile[] t, int r , int c , boolean v) {
         this.tiles = t;
         row = r;
         col = c;
